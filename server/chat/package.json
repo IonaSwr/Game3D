@@ -1,0 +1,18 @@
+{
+  "name": "onlinechat",
+  "version": "1.0.0",
+  "description": "onlinechat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "svetoslav",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.11"
+  }
+}
