@@ -45,28 +45,24 @@
 				document.body.appendChild( WEBGL.getWebGLErrorMessage() );
 			}
 			var camera, controls, scene, renderer;
+			var cameraMoveNorthSouthVilocity = 0;
+			var cameraMoveWestEastVilocity = 0;
 			init();
 			//render(); // remove when using next line for animation loop (requestAnimationFrame)
 			animate();
 			function init() {
 				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xcccccc );
-				scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+				scene.background = new THREE.Color( 0xeeaa00 );
+				scene.fog = new THREE.FogExp2( 0xcccccc, 0.0002 );
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
-				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-				camera.position.set( 400, 200, 0 );
-				// controls
-				controls = new THREE.MapControls( camera, renderer.domElement );
-				//controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-				controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-				controls.dampingFactor = 0.25;
-				controls.screenSpacePanning = false;
-				controls.minDistance = 100;
-				controls.maxDistance = 500;
-				controls.maxPolarAngle = Math.PI / 2;
+				camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000 );
+				camera.position.set( 300, 300, 50 );
+				camera.lookAt(new THREE.Vector3(0,0,0));
+			
+				
 				// world
 				var geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );
 				geometry.translate( 0, 0.5, 0 );
@@ -95,21 +91,99 @@
 				//
 				window.addEventListener( 'resize', onWindowResize, false );
 				var gui = new dat.GUI();
-				gui.add( controls, 'screenSpacePanning' );
+				//gui.add( controls, 'screenSpacePanning' );
+
+				
+				
+				//camera.lookAt(new THREE.Vector3(0,1,0));
 			}
 			function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+				//camera.updateProjectionMatrix();
 				renderer.setSize( window.innerWidth, window.innerHeight );
 			}
 			function animate() {
 				requestAnimationFrame( animate );
-				controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+				//controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
 				render();
 			}
+			
 			function render() {
 				renderer.render( scene, camera );
+				
+				camera.position.z += cameraMoveNorthSouthVilocity;
+				camera.position.x += cameraMoveWestEastVilocity;
 			}
+
+			var mousecount = 0 ;
+			onmousemove = function(e){
+				mousecount++;
+					if(mousecount%50 ==0)
+					{
+					//console.log('move')
+					
+					}
+			}
+			onmouseenter = function(e){
+				console.log('onmouseenter')
+			}
+
+		
+
+			document.onmouseleave = function(e){
+				if((window.innerWidth-e.clientX)*window.innerHeight < e.clientY*window.innerWidth )
+				{					
+					if(e.clientX*window.innerHeight < e.clientY*window.innerWidth )
+					//down
+						cameraMoveWestEastVilocity = 10;						
+					else
+					//right
+						cameraMoveNorthSouthVilocity = -10;
+						
+				}
+				else
+				{
+					if(e.clientX*window.innerHeight < e.clientY*window.innerWidth )
+					//left
+						cameraMoveNorthSouthVilocity = 10;
+					else
+					//up					
+						cameraMoveWestEastVilocity = -10;
+					
+				}
+			}
+			// onmouseover = function(e){
+			// 	console.log('onmouseover')
+			// }
+			onmousemove = function(e){
+				if(e.clientX < 25)
+					cameraMoveNorthSouthVilocity = 10;//console.log('left in')
+				else if(e.clientY < 25)
+					cameraMoveWestEastVilocity = -10;//console.log('up in')
+				else if(window.innerWidth - e.clientX < 25)
+					cameraMoveNorthSouthVilocity = -10;//console.log('right in')
+				else if(window.innerHeight - e.clientY < 25)
+					cameraMoveWestEastVilocity = 10;//console.log('down in')
+					else
+					{
+						cameraMoveWestEastVilocity = 0;
+						cameraMoveNorthSouthVilocity = 0;
+					}
+
+				//console.log('stop')
+			}
+			
+			window.onfocus = function() {
+				console.log('Got focus');
+			}
+			// window.onpageshow = window.onpagehide = window.onfocus = window.onblur = function() {
+			// 	cameraMoveWestEastVilocity = 0;
+			// 	cameraMoveNorthSouthVilocity = 0;
+			// }
+			document.addEventListener("visibilitychange", function() {
+				cameraMoveWestEastVilocity = 0;
+				cameraMoveNorthSouthVilocity = 0;
+			}, false)
     </script>
 
 </body>
